@@ -1,0 +1,22 @@
+{
+  "name": "SHT30 - Wemos D1 Mini Sensor",
+  "device_id": "sht30-sensor1",
+  "wifi": {
+    "ssid": "MY-WIFI-SSID",
+    "password": "WIFI-PASSWORD"
+  },
+  "mqtt": {
+    "host": "MQTT-BROKER-IP",
+    "port": 1883,
+    "base_topic": "sensors/",
+    "auth": false,
+    "username": "user",
+    "password": "pass"
+  },
+  "ota": {
+    "enabled": true
+  },
+  "settings": {
+    "interval": 20
+  }
+}
