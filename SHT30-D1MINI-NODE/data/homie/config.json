@@ -1,6 +1,6 @@
 {
   "name": "SHT30 - Wemos D1 Mini Sensor",
-  "device_id": "sht30-sensor1",
+  "device_id": "DEVICE-ID (ex : sht30-sensor1)",
   "wifi": {
     "ssid": "MY-WIFI-SSID",
     "password": "WIFI-PASSWORD"
@@ -17,6 +17,6 @@
     "enabled": true
   },
   "settings": {
-    "interval": 20
+    "interval": 300
   }
 }
