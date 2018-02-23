@@ -2,7 +2,7 @@
 #include <WEMOS_SHT3X.h>
 
 #define CUSTOM_FIRMWARE_NAME "sht30shield-d1mini-sensor"
-#define CUSTOM_FIRMWARE_VERSION "1.0.1"
+#define CUSTOM_FIRMWARE_VERSION "1.0.2"
 
 SHT3X sht30(0x45); // SHT 30 address - Default on D1 mini shield
 
@@ -25,6 +25,16 @@ void setupHandler() {
   });
 }
 
+void onHomieEvent(const HomieEvent& event) {
+  switch(event.type) {
+    case HomieEventType::READY_TO_SLEEP:
+      Homie.getLogger() << "Ready to sleep" << endl;
+      // convert to microseconds
+      ESP.deepSleep(sensorReadingInterval.get() * 1000000);
+      break;
+  }
+}
+
 void loopHandler() {
   if (millis() - lastTemperatureSent >= sensorReadingInterval.get() * 1000L || lastTemperatureSent == 0) {
     if (sht30.get() == 0 ) {
@@ -32,14 +42,19 @@ void loopHandler() {
       // Send Temperature
       float temperature = sht30.cTemp; // Celsius Temperature
       Homie.getLogger() << "Temperature: " << temperature << " °C" << endl;
-      temperatureNode.setProperty("degrees").send(String(temperature));
+      temperatureNode.setProperty("degrees").setRetained(true).send(String(temperature));
 
       // Send Temperature
       float hum = sht30.humidity; // Relative humidity
       Homie.getLogger() << "Humidity: " << hum << " %" << endl;
-      humidityNode.setProperty("relative").send(String(hum));
+      humidityNode.setProperty("relative").setRetained(true).send(String(hum));
 
       lastTemperatureSent = millis();
+
+      // publishing successful. Go into deep sleep.
+      Homie.getLogger() << "Preparing for deep sleep (" << sensorReadingInterval.get() << " seconds)" << endl;
+      Homie.prepareToSleep();
+
     }
   }
 }
@@ -49,6 +64,7 @@ void setup() {
   Serial << endl << endl;
   Homie_setFirmware(CUSTOM_FIRMWARE_NAME, CUSTOM_FIRMWARE_VERSION);
   Homie.setSetupFunction(setupHandler).setLoopFunction(loopHandler);
+  Homie.onEvent(onHomieEvent);
   Homie.setup();
 }
 
