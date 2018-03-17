@@ -2,7 +2,7 @@
 #include <WEMOS_SHT3X.h>
 
 #define CUSTOM_FIRMWARE_NAME "sht30shield-d1mini-sensor"
-#define CUSTOM_FIRMWARE_VERSION "1.0.2"
+#define CUSTOM_FIRMWARE_VERSION "1.0.3"
 
 SHT3X sht30(0x45); // SHT 30 address - Default on D1 mini shield
 
@@ -22,7 +22,7 @@ void setupHandler() {
   // Settings
   sensorReadingInterval.setDefaultValue(300).setValidator([] (long candidate) {
     return (candidate >= 0) && (candidate <= 3600);
-  });
+  });  
 }
 
 void onHomieEvent(const HomieEvent& event) {
@@ -65,6 +65,12 @@ void setup() {
   Homie_setFirmware(CUSTOM_FIRMWARE_NAME, CUSTOM_FIRMWARE_VERSION);
   Homie.setSetupFunction(setupHandler).setLoopFunction(loopHandler);
   Homie.onEvent(onHomieEvent);
+
+  // Increase mqtt client Keep Alive. To avoid broker disconnection issues, should be more than the Deep Sleep Interval.
+  // Let's put it 2x the Deep Sleep Interval
+  Homie.getLogger() << "Force MQTT Connection keep alive at 2x DS Interval (" << sensorReadingInterval.get() * 2 << " seconds)" << endl;
+  Homie.getMqttClient().setKeepAlive(sensorReadingInterval.get() * 2);
+  
   Homie.setup();
 }
 
