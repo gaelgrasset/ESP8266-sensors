@@ -1,8 +1,8 @@
 {
-  "name": "SHT30 - Wemos D1 Mini Sensor",
-  "device_id": "DEVICE-ID (ex : sht30-sensor1)",
+  "name": "DEVICE NAME",
+  "device_id": "DEVICE UNIQUE ID",
   "wifi": {
-    "ssid": "MY-WIFI-SSID",
+    "ssid": "WIFI-SSID",
     "password": "WIFI-PASSWORD"
   },
   "mqtt": {
@@ -11,7 +11,7 @@
     "base_topic": "sensors/",
     "auth": false,
     "username": "user",
-    "password": "pass"
+    "password": "password"
   },
   "ota": {
     "enabled": true

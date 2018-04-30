@@ -43,7 +43,7 @@ uint8_t brightness = brightnessMap[brightnessIndex];
 
 // ten seconds per color palette makes a good demo
 // 20-120 is better for deployment
-#define SECONDS_PER_PALETTE 10
+#define SECONDS_PER_PALETTE 120
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -136,7 +136,7 @@ void setup() {
  */
 bool ledCommandHandler (const HomieRange& range, const String& value) { 
  
-   String data = value;
+   String data(value);
    
    Homie.getLogger() << "Received Data from Topic: " << data << endl;
    Homie.getLogger() << endl;
@@ -147,9 +147,8 @@ bool ledCommandHandler (const HomieRange& range, const String& value) {
       data.replace("rgb(","");
       String r =  getValue(data, ',', 0);
       String g =  getValue(data, ',', 1);
-
       String b =  getValue(data, ',', 2);
-      b.replace("hallo","");
+      b.replace(")","");
 
       Homie.getLogger() << "Received R: " << r.c_str() << " G: " << g.c_str() << " B: " << b.c_str() << endl;      
       

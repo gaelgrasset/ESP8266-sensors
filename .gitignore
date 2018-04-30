@@ -1,2 +1,10 @@
 
 *.bin
+
+WS2812B-LED-MQTT-CONTROL/data/homie/config\.json
+
+WS2812B-LED-MQTT-CONTROL/Thumbs\.db
+
+ARCADEBUTTONS-LED-CONTROL/data/homie/config\.json
+
+ARCADEBUTTONS-LED-CONTROL/Thumbs\.db

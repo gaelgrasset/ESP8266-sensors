@@ -1,0 +1,21 @@
+{
+  "name": "DEVICE NAME",
+  "device_id": "DEVICE UNIQUE ID",
+  "wifi": {
+    "ssid": "WIFI-SSID",
+    "password": "WIFI-PASSWORD"
+  },
+  "mqtt": {
+    "host": "MQTT-BROKER-IP",
+    "port": 1883,
+    "base_topic": "sensors/",
+    "auth": false,
+    "username": "user",
+    "password": "password"
+  },
+  "ota": {
+    "enabled": true
+  },
+  "settings": {
+  }
+}
