@@ -42,26 +42,23 @@ int currentMQTTRetries = 0;
 
 HomieSetting<long> sensorReadingInterval("interval", "Sensor reading interval");
 
-long deepSleepTimeInSeconds = sensorReadingInterval.get();
-//long deepSleepTimeInSeconds = 5; // FOR DEBUG REASONS
+//long deepSleepTimeInSeconds = 10; // FOR DEBUG REASONS
+long deepSleepTimeInSeconds = 300; // Default value
 
-HomieNode temperatureNode("temperature", "temperature");
-HomieNode humidityNode("humidity", "humidity");
+HomieNode temperatureNode("temperature", "temperatureC");
+HomieNode humidityNode("humidity", "humidityPercentage");
 HomieNode timeNode("lastmqttmessage", "timestamp");
 
 void setupHandler() {
   //Start the NTP UDP client
   timeClient.begin();
-
-  // Units
-  temperatureNode.setProperty("unit").send("C");
-  humidityNode.setProperty("unit").send("%");
-  timeNode.setProperty("unit").send("timestamp");
-
+  
   // Settings
   sensorReadingInterval.setDefaultValue(300).setValidator([] (long candidate) {
     return (candidate >= 0) && (candidate <= 3600);
   });
+
+  deepSleepTimeInSeconds = sensorReadingInterval.get();  
 }
 
 void updateAndSendDateAndTime() {
@@ -129,9 +126,6 @@ boolean readAndSendSensorData () {
 
 void onHomieEvent(const HomieEvent& event) {
   switch (event.type) {
-    case HomieEventType::NORMAL_MODE:
-      Homie.getLogger() << "Normal Mode ON DeepSleep Flag is FALSE" << endl;
-      break;
     case HomieEventType::WIFI_CONNECTED:
       Homie.getLogger() << "Wifi connected - Resetting retry number which was " << currentWifiRetries << endl;
       currentWifiRetries = 0;
@@ -158,12 +152,11 @@ void onHomieEvent(const HomieEvent& event) {
         Homie.prepareToSleep();
       }
       break;
-    case HomieEventType::READY_TO_SLEEP:
-      Homie.getLogger() << "Ready to sleep" << endl;
-      Homie.doDeepSleep(deepSleepTimeInSeconds * 1000000);
+    case HomieEventType::READY_TO_SLEEP:      
+      Homie.getLogger() << "Let's go sleeping" << endl;
+      ESP.deepSleep(deepSleepTimeInSeconds * 1000000);
   }
 }
-
 
 void loopHandler() {
 
@@ -172,7 +165,6 @@ void loopHandler() {
     if (readAndSendSensorData()) {
       updateAndSendDateAndTime();
     }
-
     lastTemperatureSent = millis();
 
     // Go to sleep as soon as transmission is complete
@@ -202,6 +194,6 @@ void setup() {
   Homie.setup();
 }
 
-void loop() {
+void loop() {  
   Homie.loop();
 }
